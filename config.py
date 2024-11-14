@@ -10,6 +10,21 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        if not self.SYS_PATH:
+            self.SYS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+        sys.path.append(self.SYS_PATH)
+
+        logger.add(
+            self.LOG_FILE,
+            format=self.LOG_FORMAT,
+            level=self.LOG_LEVEL,
+            rotation=self.LOG_ROTATION,
+            compression=self.LOG_COMPRESSION,
+            serialize=self.LOG_SERIALIZE
+        )
+
     DB_HOST: str
     DB_PORT: int
     DB_NAME: str
@@ -38,20 +53,7 @@ class Settings(BaseSettings):
         env_file = ".env"
         env_file_encoding = "utf-8"
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        if not self.SYS_PATH:
-            self.SYS_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
-        sys.path.append(self.SYS_PATH)
-
-        logger.add(
-            self.LOG_FILE,
-            format=self.LOG_FORMAT,
-            level=self.LOG_LEVEL,
-            rotation=self.LOG_ROTATION,
-            compression=self.LOG_COMPRESSION,
-            serialize=self.LOG_SERIALIZE
-        )
+    
 
     @property
     def database_url(self) -> str:
